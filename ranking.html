@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking Completo - Truco Resenha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="truco.css">
+</head>
+<body>
+    <div class="container ranking-container">
+        <h1>Ranking Geral</h1>
+
+        <div class="back-link-container">
+            <a href="index.html" class="nav-button">Voltar ao Menu</a>
+        </div>
+        
+        <div class="ranking-nav">
+            <button class="nav-button active" data-difficulty="easy">Fácil</button>
+            <button class="nav-button" data-difficulty="medium">Médio</button>
+            <button class="nav-button" data-difficulty="hard">Difícil</button>
+        </div>
+
+        <div id="ranking-content-area" class="ranking-table">
+            <p>Carregando ranking...</p>
+        </div>
+    </div>
+    <script src="ranking.js"></script>
+</body>
+</html>
