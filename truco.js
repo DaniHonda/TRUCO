@@ -274,7 +274,7 @@ function handleTrucoRequest(requester, level) {
                 handleTrucoRequest('bot', 6);
             } else if (hasGoodHand) {
                 setMessage(`Bot aceitou! Vale ${level} Pts.`);
-                hideAllButtons(); // Correção aqui
+                resetActionButtons(true);
                 if (playerTurn) {
                     setMessage("Bot aceitou. Sua vez de jogar.");
                     enablePlayerHand();
@@ -296,7 +296,7 @@ function showPlayerResponseButtons(level) {
     trucoButton.textContent = 'Aceitar';
     trucoButton.onclick = () => {
         setMessage(`Você aceitou! Vale ${level} pts.`);
-        hideAllButtons(); // Correção aqui
+        resetActionButtons(true);
         if (playerTurn) {
             setMessage("Você aceitou. Sua vez de jogar.");
             enablePlayerHand();
@@ -327,28 +327,29 @@ function showPlayerResponseButtons(level) {
     }
 }
 
-// Função resetActionButtons corrigida
-function resetActionButtons() {
+function resetActionButtons(inTruco = false) {
     hideAllButtons();
     const isMaoDeOnze = playerScore >= 11 || botScore >= 11;
 
-    trucoButton.textContent = 'Truco';
-    trucoButton.onclick = () => handleTrucoRequest('player', 3);
-    if (isMaoDeOnze) {
-        trucoButton.classList.add('disabled');
-        trucoButton.onclick = () => {};
-    } else {
-        trucoButton.classList.remove('disabled');
-    }
-    showButton('truco-button');
+    if (!inTruco) {
+        trucoButton.textContent = 'Truco';
+        trucoButton.onclick = () => handleTrucoRequest('player', 3);
+        if (isMaoDeOnze) {
+            trucoButton.classList.add('disabled');
+            trucoButton.onclick = () => {};
+        } else {
+            trucoButton.classList.remove('disabled');
+        }
+        showButton('truco-button');
 
-    runButton.onclick = () => { 
-        botScore++;
-        setMessage("Você correu. Bot ganha 1 pt.");
-        updateMainScore();
-        setTimeout(dealCards, 2000);
-    };
-    showButton('run-button');
+        runButton.onclick = () => { 
+            botScore++;
+            setMessage("Você correu. Bot ganha 1 pt.");
+            updateMainScore();
+            setTimeout(dealCards, 2000);
+        };
+        showButton('run-button');
+    }
 }
 
 function updateManilhas() {
@@ -437,8 +438,64 @@ function enablePlayerHand() { playerHandEl.classList.remove('disabled'); }
 function hideAllButtons() { [trucoButton, seisButton, noveButton, dozeButton, runButton].forEach(b => b.style.display = 'none'); }
 function showButton(id) { document.getElementById(id).style.display = 'inline-block'; }
 
-async function fetchRanking() { /* ... (função como antes) ... */ }
-async function saveScore() { /* ... (função como antes) ... */ }
+async function fetchRanking() {
+    try {
+        const response = await fetch(`https://truco-rosy.vercel.app/api/ranking?difficulty=${difficulty}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const ranks = await response.json();
+        
+        const top3List = document.getElementById('top-3-list');
+        top3List.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+            const li = document.createElement('li');
+            if (ranks[i]) {
+                li.innerHTML = `<span>${i + 1}. ${ranks[i].name}</span> <span>${ranks[i].time}</span>`;
+            } else {
+                li.textContent = `${i + 1}. -`;
+            }
+            top3List.appendChild(li);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar ranking:', error);
+        document.getElementById('top-3-list').innerHTML = '<li>Erro ao carregar.</li>';
+    }
+}
+
+async function saveScore() {
+    const nameInput = document.getElementById('player-name-input');
+    const playerName = nameInput.value.trim().toUpperCase() || 'JOGADOR';
+    nameInput.value = playerName;
+    const duration = document.getElementById('game-duration').textContent;
+    const winner = playerScore >= 12;
+
+    if (!winner) {
+        alert("Apenas vitórias são salvas no ranking.");
+        document.getElementById('save-score-button').disabled = true;
+        return;
+    }
+
+    const scoreData = { name: playerName, time: duration, difficulty: difficulty };
+
+    try {
+        const response = await fetch('https://truco-rosy.vercel.app/api/ranking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(scoreData)
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const result = await response.json();
+        
+        document.getElementById('player-rank').textContent = result.newRank || '-';
+        const saveButton = document.getElementById('save-score-button');
+        saveButton.disabled = true;
+        saveButton.textContent = 'Salvo!';
+        
+        await fetchRanking();
+    } catch (error) {
+        console.error('Erro ao salvar no ranking:', error);
+        alert('Não foi possível salvar seu score. Verifique o backend.');
+    }
+}
 
 function startTimer() {
     stopTimer();

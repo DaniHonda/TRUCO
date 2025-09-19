@@ -4,21 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentArea = document.getElementById('ranking-content-area');
 
     async function loadRanking(difficulty) {
-        // 1. Atualiza o estilo do botão ativo
         navButtons.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
         });
 
-        // 2. Mostra mensagem de carregamento
         contentArea.innerHTML = '<p>Carregando ranking...</p>';
 
         try {
-            // 3. Busca os dados do servidor
-            // ATENÇÃO: a URL '/api/ranking.php' é um exemplo. Mude para o endereço do seu servidor.
-            const response = await fetch(`/api/ranking.php?difficulty=${difficulty}&limit=all`);
+            const response = await fetch(`https://truco-rosy.vercel.app/api/ranking?difficulty=${difficulty}&limit=all`);
+            if (!response.ok) throw new Error('A resposta da rede não foi OK');
             const ranks = await response.json();
 
-            // 4. Monta a tabela com os dados recebidos
             let tableHTML = `
                 <table>
                     <thead>
@@ -48,11 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error(`Erro ao carregar ranking ${difficulty}:`, error);
-            contentArea.innerHTML = '<p>Erro ao carregar ranking. Tente novamente mais tarde.</p>';
+            contentArea.innerHTML = '<p>Erro ao carregar ranking. Verifique o backend.</p>';
         }
     }
 
-    // 5. Adiciona o evento de clique para cada botão de navegação
     navButtons.forEach(button => {
         button.addEventListener('click', () => {
             const difficulty = button.dataset.difficulty;
@@ -60,6 +55,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 6. Carrega o ranking 'Fácil' por padrão ao abrir a página
     loadRanking('easy');
 });
