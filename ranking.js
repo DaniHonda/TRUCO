@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.innerHTML = '<p>Carregando ranking...</p>';
 
         try {
-            const response = await fetch(`https://truco-rosy.vercel.app/api/ranking?difficulty=${difficulty}&limit=all`);
+            // URL ATUALIZADA
+            const response = await fetch(`https://truco-resenha.vercel.app/api/ranking?difficulty=${difficulty}&limit=all`);
             if (!response.ok) throw new Error('A resposta da rede não foi OK');
             const ranks = await response.json();
 
