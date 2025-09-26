@@ -7,13 +7,13 @@ body {
     color: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; 
+    justify-content: center; /* Alterado para centralizar verticalmente */
     align-items: center;
     min-height: 100vh;
     margin: 0;
     text-shadow: 2px 2px #000;
     box-sizing: border-box;
-     padding-top: 120px;
+    padding: 20px 0; /* Padding vertical geral para respiro */
 }
 
 .container {
@@ -678,4 +678,5 @@ button.disabled {
     box-shadow: 9px 9px 0px #000;
     background: #0b6623;
 }
+
 
