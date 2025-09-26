@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
     <title>Truco Resenha</title>
     <link rel="stylesheet" href="truco.css">
 </head>
@@ -16,14 +17,19 @@
                 <span class="title-truco">♦ Truco ♦</span>
                 <span class="title-resenha">Resenha</span>
             </h1>
+            <h1></h1>
         </div>
 
         <div id="difficulty-selection">
             <p>Dificuldade:</p>
             <div class="difficulty-options">
-                <button id="easy-mode"><span class="suit-spade">♠</span> Resenha</button>
-                <button id="medium-mode"><span class="suit-heart">♥</span> Crackudo</button>
-                <button id="hard-mode"><span class="suit-club">♣</span> Alex</button>
+    <button id="easy-mode">Resenha</button>
+    <button id="medium-mode">Crackudo</button>
+    <button id="hard-mode">Alex</button>
+
+                <button id="easy-mode">Resenha</button>
+                <button id="medium-mode">Crackudo</button>
+                <button id="hard-mode">Alex</button>
             </div>
         </div>
 
@@ -42,6 +48,7 @@
             <div class="game-area">
                 <div id="message-area" class="message"></div>
                 <div class="bot-hand"></div>
+
                 <div class="center-table-area">
                     <div class="deck-area">
                         <div class="fake-deck">
@@ -57,6 +64,7 @@
                         <div id="player-card-played" class="card-played"></div>
                     </div>
                 </div>
+
                 <div id="player-hand" class="player-hand"></div>
                 <div class="actions">
                     <button id="new-hand-button" style="display: none;">Nova Mão</button>
@@ -69,7 +77,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="top-buttons">
         <button id="pause-button" style="display: none;">Pause</button>
         <button id="show-ranking-button" class="ranking-button">Ranking</button>
@@ -78,13 +86,14 @@
     <div id="pause-overlay" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2>JOGO PAUSADO</h2>
+            <button id="resume-button">Continuar</button>
             <div class="end-game-actions">
                 <button id="resume-button">Continuar</button>
                 <button id="menu-button-pause">Voltar ao Menu</button>
             </div>
         </div>
     </div>
-
+    
     <div id="end-game-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2 id="end-game-title">Você Venceu!</h2>
@@ -109,4 +118,5 @@
 
     <script src="truco.js"></script>
 </body>
+</html>
 </html>
