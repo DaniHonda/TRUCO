@@ -44,7 +44,7 @@ function setDifficulty(level) {
     
     document.querySelector('.title-sign').style.display = 'none';
     document.getElementById('difficulty-selection').style.display = 'none';
-    showRankingButton.style.display = 'none'; // Esconde o botão de ranking
+    showRankingButton.style.display = 'none';
 
     const gameWrapper = document.querySelector('.container');
     gameWrapper.style.background = '#0b6623';
@@ -57,9 +57,8 @@ function setDifficulty(level) {
     dealCards();
 }
 
-// Função centralizada para atualizar placar e checar vitória
 function updateScore(player, pointsToAdd) {
-    if (!gameActive) return true; // Previne múltiplas chamadas de fim de jogo
+    if (!gameActive) return true;
 
     if (player === 'player') {
         playerScore += pointsToAdd;
@@ -68,13 +67,12 @@ function updateScore(player, pointsToAdd) {
     }
     updateMainScore();
 
-    // Checa se o jogo acabou toda vez que a pontuação é atualizada
     if (playerScore >= 12 || botScore >= 12) {
-        gameActive = false; // Impede outras ações
-        setTimeout(endGame, 500); // Usa timeout para a mensagem da mão aparecer
-        return true; // Retorna true para indicar que o jogo acabou
+        gameActive = false;
+        setTimeout(() => endGame(difficulty), 500); // Passa a dificuldade atual para o endGame
+        return true;
     }
-    return false; // Retorna false se o jogo continua
+    return false;
 }
 
 function dealCards() {
@@ -209,8 +207,8 @@ function endHand(winner) {
     setTimeout(dealCards, 2500);
 }
 
-function endGame() {
-    gameActive = false; // Garante que o estado final é 'não ativo'
+function endGame(finalDifficulty) {
+    gameActive = false;
     stopTimer();
     const finalWinner = playerScore >= 12 ? 'Você' : 'Bot';
     const duration = new Date() - gameStartTime;
@@ -224,7 +222,7 @@ function endGame() {
     const modal = document.getElementById('end-game-modal');
     document.getElementById('end-game-title').textContent = finalWinner === 'Você' ? 'Você Venceu!' : 'Você Perdeu!';
     document.getElementById('game-duration').textContent = formattedDuration;
-    document.getElementById('ranking-difficulty').textContent = difficulty;
+    document.getElementById('ranking-difficulty').textContent = finalDifficulty;
     
     const rankingSubmissionEl = document.querySelector('.ranking-submission');
     if (finalWinner === 'Você') {
@@ -234,7 +232,7 @@ function endGame() {
     }
     
     modal.style.display = 'flex';
-    fetchRanking();
+    fetchRanking(finalDifficulty);
 }
 
 function getCardValue(card) {
@@ -452,8 +450,68 @@ function enablePlayerHand() { playerHandEl.classList.remove('disabled'); }
 function hideAllButtons() { [trucoButton, seisButton, noveButton, dozeButton, runButton].forEach(b => b.style.display = 'none'); }
 function showButton(id) { document.getElementById(id).style.display = 'inline-block'; }
 
-async function fetchRanking() { /* ... (função como antes) ... */ }
-async function saveScore() { /* ... (função como antes) ... */ }
+async function fetchRanking(difficultyToFetch) {
+    if (!difficultyToFetch) {
+        console.error("FetchRanking chamado sem dificuldade!");
+        return;
+    }
+    try {
+        const response = await fetch(`https://truco-rosy.vercel.app/api/ranking?difficulty=${difficultyToFetch}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const ranks = await response.json();
+        
+        const top3List = document.getElementById('top-3-list');
+        top3List.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+            const li = document.createElement('li');
+            if (ranks[i]) {
+                li.innerHTML = `<span>${i + 1}. ${ranks[i].name}</span> <span>${ranks[i].time}</span>`;
+            } else {
+                li.textContent = `${i + 1}. -`;
+            }
+            top3List.appendChild(li);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar ranking:', error);
+        document.getElementById('top-3-list').innerHTML = '<li>Erro ao carregar.</li>';
+    }
+}
+
+async function saveScore() {
+    const nameInput = document.getElementById('player-name-input');
+    const playerName = nameInput.value.trim().toUpperCase() || 'JOGADOR';
+    nameInput.value = playerName;
+    const duration = document.getElementById('game-duration').textContent;
+    const winner = playerScore >= 12;
+
+    if (!winner) {
+        alert("Apenas vitórias são salvas no ranking.");
+        document.getElementById('save-score-button').disabled = true;
+        return;
+    }
+
+    const scoreData = { name: playerName, time: duration, difficulty: difficulty };
+
+    try {
+        const response = await fetch('https://truco-rosy.vercel.app/api/ranking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(scoreData)
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const result = await response.json();
+        
+        document.getElementById('player-rank').textContent = result.newRank || '-';
+        const saveButton = document.getElementById('save-score-button');
+        saveButton.disabled = true;
+        saveButton.textContent = 'Salvo!';
+        
+        await fetchRanking(difficulty);
+    } catch (error) {
+        console.error('Erro ao salvar no ranking:', error);
+        alert('Não foi possível salvar seu score. Verifique o backend.');
+    }
+}
 
 function startTimer() {
     stopTimer();
