@@ -1,5 +1,5 @@
 body {
-    font-family: 'Press Start 2P', cursive;
+    font-family:  "Jersey 10", sans-serif;
     background-color: #0b6623;
     background-image: url("img/naipes.png");
     background-repeat: repeat;
@@ -698,3 +698,4 @@ button.disabled {
     box-shadow: 9px 9px 0px #000;
     background: #0b6623;
 }
+
