@@ -42,10 +42,12 @@ function setDifficulty(level) {
     difficulty = level;
     gameStartTime = new Date();
     
-    document.querySelector('.title-sign').style.display = 'none';
+    // Esconde o menu e a placa de título
+    document.querySelector('.title-sign').style.display = 'none'; 
     document.getElementById('difficulty-selection').style.display = 'none';
     showRankingButton.style.display = 'none';
 
+    // Configura o container para o modo de jogo
     const gameWrapper = document.querySelector('.container');
     gameWrapper.style.background = '#0b6623';
     gameWrapper.style.border = '4px solid #C4A484';
@@ -56,7 +58,6 @@ function setDifficulty(level) {
     startTimer();
     dealCards();
 }
-
 function updateScore(player, pointsToAdd) {
     if (!gameActive) return true;
 
@@ -563,3 +564,4 @@ document.getElementById('menu-button-pause').addEventListener('click', () => loc
 showRankingButton.addEventListener('click', () => {
     window.location.href = 'ranking.html';
 });
+
