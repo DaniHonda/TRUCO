@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // CORREÇÃO: O seletor agora é mais específico, pegando apenas os botões dentro de '.ranking-nav'
-    const navButtons = document.querySelectorAll('.ranking-nav .nav-button');
+    const navButtons = document.querySelectorAll('.nav-button');
     const contentArea = document.getElementById('ranking-content-area');
 
     async function loadRanking(difficulty) {
@@ -15,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // 3. Busca os dados do servidor
-            const response = await fetch(`https://truco-rosy.vercel.app/api/ranking?difficulty=${difficulty}&limit=all`);
-            if (!response.ok) throw new Error('A resposta da rede não foi OK');
+            // ATENÇÃO: a URL '/api/ranking.php' é um exemplo. Mude para o endereço do seu servidor.
+            const response = await fetch(`/api/ranking.php?difficulty=${difficulty}&limit=all`);
             const ranks = await response.json();
 
             // 4. Monta a tabela com os dados recebidos

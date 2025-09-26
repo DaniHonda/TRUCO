@@ -44,6 +44,7 @@ function setDifficulty(level) {
     
     document.querySelector('.title-sign').style.display = 'none';
     document.getElementById('difficulty-selection').style.display = 'none';
+    document.querySelector('body').style.paddingTop = '10px';
     showRankingButton.style.display = 'none';
 
     const gameWrapper = document.querySelector('.container');
@@ -69,7 +70,7 @@ function updateScore(player, pointsToAdd) {
 
     if (playerScore >= 12 || botScore >= 12) {
         gameActive = false;
-        setTimeout(() => endGame(difficulty), 500); // Passa a dificuldade atual para o endGame
+        setTimeout(() => endGame(difficulty), 500);
         return true;
     }
     return false;
