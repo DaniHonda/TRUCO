@@ -13,7 +13,7 @@ body {
     margin: 0;
     text-shadow: 2px 2px #000;
     box-sizing: border-box;
-     padding-top: 350px;
+     padding-top: 120px;
 }
 
 .container {
@@ -678,3 +678,4 @@ button.disabled {
     box-shadow: 9px 9px 0px #000;
     background: #0b6623;
 }
+
