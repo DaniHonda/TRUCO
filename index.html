@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>Truco Resenha</title>
     <link rel="stylesheet" href="truco.css">
 </head>
 <body>
     <div class="container">
         <div class="title-sign">
-            <h1></h1>
+            <h1>
+                <span class="title-truco">♦ Truco ♦</span>
+                <span class="title-resenha">Resenha</span>
+            </h1>
         </div>
 
         <div id="difficulty-selection">
             <p>Dificuldade:</p>
             <div class="difficulty-options">
-                <button id="easy-mode">Resenha</button>
-                <button id="medium-mode">Crackudo</button>
-                <button id="hard-mode">Alex</button>
+                <button id="easy-mode"><span class="suit-spade">♠</span> Resenha</button>
+                <button id="medium-mode"><span class="suit-heart">♥</span> Crackudo</button>
+                <button id="hard-mode"><span class="suit-club">♣</span> Alex</button>
             </div>
         </div>
 
@@ -95,15 +98,3 @@
                 <ol id="top-3-list">
                     <li>-</li><li>-</li><li>-</li>
                 </ol>
-                <p>Sua Posição: <strong id="player-rank">-</strong></p>
-            </div>
-            <div class="end-game-actions">
-                <button id="new-game-button">Novo Jogo</button>
-                <button id="menu-button">Voltar ao Menu</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="truco.js"></script>
-</body>
-</html>
