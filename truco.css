@@ -1,65 +1,143 @@
 body {
     font-family: 'Press Start 2P', cursive;
-    background-color: #3D2B1F;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Cpath d='M12 0h18v6h6v6h6v18h-6v6h-6v6H12v-6H6v-6H0V12h6V6h6V0zm12 6h-6v6h6V6zm-6 18h6v6h-6v-6zm12-12h6v6h-6v-6zM6 18h6v6H6v-6z'/%3E%3C/g%3E%3C/svg%3E");
-    color: #F5F5DC;
+    background-color: #0b6623;
+    background-image: url("img/naipes.png");
+    background-repeat: repeat;
+    background-size: 220px;
+    color: #fff;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start; 
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    flex-direction: column;
     text-shadow: 2px 2px #000;
-    padding: 10px 0;
     box-sizing: border-box;
+     padding-top: 350px;
 }
 
 .container {
     text-align: center;
-    background: #0b6623;
-    padding: 20px;
+    background: none; 
+    padding: 15px;
     width: 90%;
     max-width: 850px;
-    border: 4px solid #C4A484;
-    box-shadow: 8px 8px 0px #000000c0;
+    border: none;
+    box-shadow: none;
 }
 
-h1 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-    color: #f2d44e; 
+.title-sign {
+    position: absolute;
+    top: -60px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background: url("img/placa.png") no-repeat center;
+    background-size: contain;
+    width: 800px;  
+    height: 500px;  
+    border: none;
+    box-shadow: none;
+    z-index: 0;
+}
+
+.title-sign h1 {
+    font-size: 0; 
+    color: transparent;
+    background: none;
 }
 
 #difficulty-selection {
-    background-color: #064c19;
-    border: 4px solid #C4A484;
-    box-shadow: 8px 8px 0px #000000c0;
-    padding: 30px;
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    width: 70%;
-    max-width: 450px;
-    margin: 0 auto;
+    gap: 25px;
 }
 
 #difficulty-selection p {
-    font-size: 1.2em;
-    color: #f2d44e;
-    margin: 0 0 10px 0;
+    font-size: 2.5em; 
+    margin-bottom: 30px;
 }
 
 #difficulty-selection button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1em;
-    transition: background-color 0.2s;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
 }
 
-#easy-mode:hover:not(.disabled) { background-color: #8aff8a; }
-#medium-mode:hover:not(.disabled) { background-color: #f2d44e; }
-#hard-mode:hover:not(.disabled) { background-color: #b95c50; color: #fff; }
+#difficulty-selection button:hover {
+    transform: scale(1.1);
+    color: #f2d44e;
+}
+
+
+.difficulty-options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+#easy-mode::before {
+    content: "";
+    background: url("img/espadas.png") no-repeat center;
+    background-size: contain;
+    width: 45px;
+    height: 45px;
+    display: inline-block;
+}
+
+#medium-mode::before {
+    content: "";
+    background: url("img/copas.png") no-repeat center;
+    background-size: contain;
+    width: 45px;
+    height: 45px;
+    display: inline-block;
+}
+
+#hard-mode::before {
+    content: "";
+    background: url("img/paus.png") no-repeat center;
+    background-size: contain;
+    width: 45px;
+    height: 45px;
+    display: inline-block;
+}
+
+#hard-mode {
+    color: #e51d1d !important;
+}
+
+#easy-mode::before,
+#medium-mode::before,
+#hard-mode::before {
+    content: "";
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 70px; 
+    height: 70px;
+    display: inline-block;
+}
+
+#game-container {
+    background: #0b6623;
+    border: 6px solid #c4a484;
+    box-shadow: 10px 10px 0px #000000c0;
+    padding: 15px;
+}
+
 
 .score-board {
     display: flex;
@@ -154,7 +232,9 @@ h1 {
 .fake-deck .card:nth-child(2) { transform: rotate(2deg); }
 .fake-deck .card:nth-child(3) { transform: rotate(5deg); }
 
-.table-label { font-size: 0.8em; }
+.table-label {
+    font-size: 0.8em;
+}
 
 .played-cards-wrapper {
     display: flex;
@@ -215,8 +295,12 @@ button.disabled {
     box-shadow: 4px 4px 0px #000;
 }
 
-#run-button { background-color: #b95c50; }
-#run-button:hover:not(.disabled) { background-color: #d67e72; }
+#run-button {
+    background-color: #b95c50;
+}
+#run-button:hover:not(.disabled) {
+    background-color: #d67e72;
+}
 
 .top-buttons {
     position: fixed;
@@ -228,14 +312,24 @@ button.disabled {
 }
 
 .ranking-button {
-    background-color: #b95c50;
-    text-decoration: none;
-}
-.ranking-button:hover {
-     background-color: #d67e72;
+    background-color: #f5f5dc;
+    color: #000;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0px #000;
+    border-radius: 6px;
+    padding: 8px 12px;
 }
 
-#pause-button { background-color: #f2d44e; }
+.ranking-button:hover {
+    background-color: #f2d44e;
+    transform: translateY(-2px) translateX(-2px);
+    box-shadow: 5px 5px 0px #000;
+}
+
+
+#pause-button {
+    background-color: #f2d44e;
+}
 
 .modal-overlay {
     position: fixed;
@@ -331,10 +425,6 @@ button.disabled {
         padding: 5px 0;
     }
 
-    h1 {
-        font-size: 1.2em;
-    }
-
     .container {
         padding: 10px;
         border-width: 2px;
@@ -342,9 +432,22 @@ button.disabled {
     }
     
     .title-sign {
-        padding: 5px 10px;
-        margin-bottom: 20px;
+        width: 95%;
+        height: 300px;
+        top: -10px;
     }
+    
+    #difficulty-selection p {
+        font-size: 1.5em;
+    }
+    #difficulty-selection button {
+        font-size: 1.2em;
+    }
+    #easy-mode::before, #medium-mode::before, #hard-mode::before {
+        width: 35px;
+        height: 35px;
+    }
+
 
     .score h2 {
         font-size: 0.8em;
@@ -420,7 +523,19 @@ button.disabled {
 }
 
 @media (max-width: 480px) {
-    h1 {
+    body {
+        padding-top: 250px;
+    }
+    
+    .title-sign {
+        height: 250px;
+        top: 0;
+    }
+    
+    #difficulty-selection p {
+        font-size: 1.2em;
+    }
+    #difficulty-selection button {
         font-size: 1em;
     }
 
@@ -448,3 +563,118 @@ button.disabled {
     }
 }
 
+.ranking-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.ranking-container:first-of-type {
+    margin-top: -350px; 
+}
+
+.ranking-container h1 {
+    font-size: 3em;
+    color: #019530;  
+    text-shadow: 3px 3px #000;
+    margin: 0 0 30px 0;
+}
+
+
+.ranking-nav {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.ranking-nav .nav-button {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: 2em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.ranking-nav .nav-button.active,
+.ranking-nav .nav-button:hover {
+    color: #f2d44e;
+    transform: scale(1.1);
+}
+
+.ranking-nav .nav-button[data-difficulty="easy"]::before {
+    content: "♠";
+    margin-right: 10px;
+    color: #000; 
+}
+.ranking-nav .nav-button[data-difficulty="medium"]::before {
+    content: "♥";
+    margin-right: 10px;
+    color: #e51d1d;
+}
+.ranking-nav .nav-button[data-difficulty="hard"]::before {
+    content: "♣";
+    margin-right: 10px;
+    color: #000;
+}
+.ranking-nav .nav-button[data-difficulty="hard"] {
+    color: #e51d1d;
+}
+
+
+.ranking-table table {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #064c19;
+    border: 4px solid #c4a484;
+    box-shadow: 8px 8px 0px #000000c0;
+    color: #fff;
+    font-size: 1em;
+}
+
+.ranking-table th, 
+.ranking-table td {
+    border-bottom: 2px solid #c4a484;
+    padding: 12px;
+    text-align: center;
+}
+
+.ranking-table th {
+    background-color: #0b6623;
+    color: #f2d44e;
+    font-size: 1.1em;
+}
+
+.ranking-table tr:last-child td {
+    border-bottom: none;
+}
+
+.back-link-container {
+    margin: 20px 0 40px 0;
+}
+
+.back-link-container .nav-button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2em;
+    background: #019530;
+    color: #fff;
+    padding: 15px 25px;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px #000;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.back-link-container .nav-button:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #000;
+    background: #0b6623;
+}
