@@ -27,14 +27,15 @@ body {
 }
 
 .title-sign {
-    position: absolute;
-    top: -60px; 
-    left: 50%;
-    transform: translateX(-50%);
+    /* Posição relativa para fluir com o conteúdo */
+    position: relative; 
     background: url("img/placa.png") no-repeat center;
     background-size: contain;
-    width: 800px;  
-    height: 500px;  
+    width: 100%;
+    max-width: 800px;
+    height: 0;
+    padding-bottom: 62.5%; /* Proporção da imagem (500/800) */
+    margin: 0 auto 40px auto;
     border: none;
     box-shadow: none;
     z-index: 0;
