@@ -41,7 +41,7 @@ let pausedTime = 0;
 function setDifficulty(level) {
     difficulty = level;
     gameStartTime = new Date();
-    
+
     document.querySelector('.title-sign').style.display = 'none';
     document.getElementById('difficulty-selection').style.display = 'none';
     showRankingButton.style.display = 'none';
@@ -52,6 +52,7 @@ function setDifficulty(level) {
     gameWrapper.style.boxShadow = '8px 8px 0px #000000c0';
 
     gameContainer.style.display = 'block';
+    document.getElementById('pause-button').style.display = 'inline-block';
     pauseButton.style.display = 'inline-block';
     startTimer();
     dealCards();
@@ -93,14 +94,14 @@ function dealCards() {
     playerHand = deck.splice(0, 3);
     botHand = deck.splice(0, 3);
     vira = deck.splice(0, 1)[0];
-    
+
     updateManilhas();
     renderHands();
     renderViraCard();
     clearPlayedCards();
     updateMainScore();
     resetActionButtons();
-    
+
     playerTurn = Math.random() > 0.5;
     if (!playerTurn) {
         setMessage('O bot começa...');
@@ -114,7 +115,7 @@ function dealCards() {
 
 function playCard(card, player, isHidden = false) {
     if (isPaused || !gameActive || (player === 'player' && !playerTurn)) return;
-    
+
     const handEl = player === 'player' ? playerHandEl : botHandEl;
     const cardEl = player === 'player' ? handEl.querySelector(`[data-card-id="${card.id}"]`) : handEl.querySelector('.card');
 
@@ -126,6 +127,7 @@ function playCard(card, player, isHidden = false) {
     setTimeout(() => {
         if (!gameActive) return;
         cardEl.remove();
+
         const playedCardObject = { ...card, wasHidden: isHidden };
 
         if (player === 'player') {
@@ -162,7 +164,7 @@ function checkRoundWinner() {
     if (pValue > bValue) { winner = 'player'; playerRoundWins++; } 
     else if (bValue > pValue) { winner = 'bot'; botRoundWins++; } 
     else { winner = 'empate'; playerRoundWins++; botRoundWins++; }
-    
+
     setMessage(winner === 'player' ? 'Você venceu a rodada!' : winner === 'bot' ? 'O Bot venceu a rodada!' : 'Rodada Empatada!');
 
     setTimeout(() => {
@@ -170,13 +172,13 @@ function checkRoundWinner() {
         clearPlayedCards();
         playerPlayedCard = null;
         botPlayedCard = null;
-        
+
         const handWinner = playerRoundWins >= 2 ? 'player' : botRoundWins >= 2 ? 'bot' : null;
         if (handWinner || roundCounter === 3) {
             endHand(playerRoundWins >= botRoundWins ? 'player' : 'bot');
             return;
         }
-        
+
         playerTurn = (winner === 'player' || winner === 'empate');
         renderHands(); 
         if (playerTurn) {
@@ -191,22 +193,33 @@ function checkRoundWinner() {
 }
 
 function endHand(winner) {
+    gameActive = false;
     if (!gameActive) return;
     points = trucoState > 1 ? trucoState : 1;
     let finalMessage;
 
     if (winner === 'player') {
         finalMessage = `Você venceu a mão! (+${points} pts)`;
+        playerScore += points;
         if (updateScore('player', points)) return;
     } else {
         finalMessage = `O bot venceu a mão. (+${points} pts)`;
+        botScore += points;
         if (updateScore('bot', points)) return;
     }
-    
+
     setMessage(finalMessage);
+    updateMainScore();
+
+    if (playerScore >= 12 || botScore >= 12) {
+        setTimeout(endGame, 1000);
+    } else {
+        setTimeout(dealCards, 2500);
+    }
     setTimeout(dealCards, 2500);
 }
 
+function endGame() {
 function endGame(finalDifficulty) {
     gameActive = false;
     stopTimer();
@@ -222,15 +235,18 @@ function endGame(finalDifficulty) {
     const modal = document.getElementById('end-game-modal');
     document.getElementById('end-game-title').textContent = finalWinner === 'Você' ? 'Você Venceu!' : 'Você Perdeu!';
     document.getElementById('game-duration').textContent = formattedDuration;
+    document.getElementById('ranking-difficulty').textContent = difficulty;
     document.getElementById('ranking-difficulty').textContent = finalDifficulty;
-    
+
+    modal.style.display = 'flex';
     const rankingSubmissionEl = document.querySelector('.ranking-submission');
     if (finalWinner === 'Você') {
         rankingSubmissionEl.style.display = 'flex';
     } else {
         rankingSubmissionEl.style.display = 'none';
     }
-    
+
+    fetchRanking();
     modal.style.display = 'flex';
     fetchRanking(finalDifficulty);
 }
@@ -243,17 +259,21 @@ function getCardValue(card) {
 
 function botPlays() {
     if (isPaused || !gameActive || playerTurn) return;
+
     if (trucoState === 0 && playerHand.length > 0 && playerScore < 11 && botScore < 11) {
         let bluffChance = 0;
         if (difficulty === 'easy') bluffChance = 0.05;
         if (difficulty === 'medium') bluffChance = 0.20;
         if (difficulty === 'hard') bluffChance = 0.35;
+
         const shouldConsiderTruco = botHasGoodHand(botHand) || Math.random() < bluffChance;
+
         if (shouldConsiderTruco && Math.random() < 0.5) {
             handleTrucoRequest('bot', 3);
             return;
         }
     }
+
     let cardToPlay;
     const sortedHand = [...botHand].sort((a, b) => getCardValue(a) - getCardValue(b));
     if (playerPlayedCard) {
@@ -266,12 +286,13 @@ function botPlays() {
 }
 
 function handleTrucoRequest(requester, level) {
+    if (isPaused) return;
     if (isPaused || !gameActive) return;
     trucoRequester = requester;
     trucoState = level;
     const valueMap = { 3: 'TRUCO', 6: 'SEIS', 9: 'NOVE', 12: 'DOZE' };
     const raisedValue = valueMap[level];
-    
+
     disablePlayerHand();
     hideAllButtons();
 
@@ -285,6 +306,7 @@ function handleTrucoRequest(requester, level) {
             const hasGoodHand = botHasGoodHand(botHand);
             const hasVeryGoodHand = botHasVeryGoodHand(botHand);
             const pointsAwarded = pointsWhenRunning[level];
+
             const wantsToRaiseAsBluff = !hasVeryGoodHand && Math.random() < 0.10;
             const wantsToRaiseWithGoodHand = hasVeryGoodHand && Math.random() < 0.40;
 
@@ -292,6 +314,7 @@ function handleTrucoRequest(requester, level) {
                 handleTrucoRequest('bot', 6);
             } else if (hasGoodHand) {
                 setMessage(`Bot aceitou! Vale ${level} Pts.`);
+                hideAllButtons(); // Correção aqui
                 hideAllButtons();
                 if (playerTurn) {
                     setMessage("Bot aceitou. Sua vez de jogar.");
@@ -302,6 +325,8 @@ function handleTrucoRequest(requester, level) {
                 }
             } else {
                 setMessage(`O bot correu! Você ganha ${pointsAwarded} pts.`);
+                playerScore += pointsAwarded;
+                updateMainScore();
                 if (updateScore('player', pointsAwarded)) return;
                 setTimeout(dealCards, 2000);
             }
@@ -313,6 +338,7 @@ function showPlayerResponseButtons(level) {
     trucoButton.textContent = 'Aceitar';
     trucoButton.onclick = () => {
         setMessage(`Você aceitou! Vale ${level} pts.`);
+        hideAllButtons(); // Correção aqui
         hideAllButtons();
         if (playerTurn) {
             setMessage("Você aceitou. Sua vez de jogar.");
@@ -328,6 +354,8 @@ function showPlayerResponseButtons(level) {
     runButton.onclick = () => {
         const pointsAwarded = pointsWhenRunning[level];
         setMessage(`Você correu! O bot ganha ${pointsAwarded} pts.`);
+        botScore += pointsAwarded;
+        updateMainScore();
         if (updateScore('bot', pointsAwarded)) return;
         setTimeout(dealCards, 2000);
     };
@@ -343,9 +371,11 @@ function showPlayerResponseButtons(level) {
     }
 }
 
+// Função resetActionButtons corrigida
 function resetActionButtons() {
     hideAllButtons();
     const isMaoDeOnze = playerScore >= 11 || botScore >= 11;
+
     trucoButton.textContent = 'Truco';
     trucoButton.onclick = () => handleTrucoRequest('player', 3);
     if (isMaoDeOnze) {
@@ -357,7 +387,9 @@ function resetActionButtons() {
     showButton('truco-button');
 
     runButton.onclick = () => { 
+        botScore++;
         setMessage("Você correu. Bot ganha 1 pt.");
+        updateMainScore();
         if (updateScore('bot', 1)) return;
         setTimeout(dealCards, 2000);
     };
@@ -450,6 +482,8 @@ function enablePlayerHand() { playerHandEl.classList.remove('disabled'); }
 function hideAllButtons() { [trucoButton, seisButton, noveButton, dozeButton, runButton].forEach(b => b.style.display = 'none'); }
 function showButton(id) { document.getElementById(id).style.display = 'inline-block'; }
 
+async function fetchRanking() { /* ... (função como antes) ... */ }
+async function saveScore() { /* ... (função como antes) ... */ }
 async function fetchRanking(difficultyToFetch) {
     if (!difficultyToFetch) {
         console.error("FetchRanking chamado sem dificuldade!");
@@ -543,7 +577,7 @@ function resumeGame() {
     isPaused = false;
     document.getElementById('pause-overlay').style.display = 'none';
     startTimer();
-    
+
     if (!playerTurn) {
         setMessage('Bot jogando...');
         setTimeout(botPlays, 500);
@@ -562,4 +596,5 @@ document.getElementById('resume-button').addEventListener('click', resumeGame);
 document.getElementById('menu-button-pause').addEventListener('click', () => location.reload());
 showRankingButton.addEventListener('click', () => {
     window.location.href = 'ranking.html';
+});
 });
