@@ -348,7 +348,6 @@ function showPlayerResponseButtons(level) {
 function resetActionButtons() {
     hideAllButtons();
     const isMaoDeOnze = playerScore >= 11 || botScore >= 11;
-
     trucoButton.textContent = 'Truco';
     trucoButton.onclick = () => handleTrucoRequest('player', 3);
     if (isMaoDeOnze) {
