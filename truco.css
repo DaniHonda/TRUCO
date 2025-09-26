@@ -303,7 +303,7 @@ h1 {
 }
 
 button {
-    font-family: 'Press Start 2P', cursive;
+    font-family:  "Jersey 10", sans-serif;
     padding: 12px 15px;
     font-size: 0.8em;
     cursor: pointer;
@@ -410,7 +410,7 @@ button.disabled {
 }
 
 #player-name-input {
-    font-family: 'Press Start 2P', cursive;
+    font-family:  "Jersey 10", sans-serif;
     width: 200px;
     padding: 10px;
     font-size: 1em;
@@ -698,4 +698,5 @@ button.disabled {
     box-shadow: 9px 9px 0px #000;
     background: #0b6623;
 }
+
 
