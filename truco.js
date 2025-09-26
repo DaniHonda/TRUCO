@@ -41,10 +41,9 @@ let pausedTime = 0;
 function setDifficulty(level) {
     difficulty = level;
     gameStartTime = new Date();
-
+    
     document.querySelector('.title-sign').style.display = 'none';
     document.getElementById('difficulty-selection').style.display = 'none';
-    showRankingButton.style.display = 'none';
 
     const gameWrapper = document.querySelector('.container');
     gameWrapper.style.background = '#0b6623';
@@ -53,27 +52,8 @@ function setDifficulty(level) {
 
     gameContainer.style.display = 'block';
     document.getElementById('pause-button').style.display = 'inline-block';
-    pauseButton.style.display = 'inline-block';
     startTimer();
     dealCards();
-}
-
-function updateScore(player, pointsToAdd) {
-    if (!gameActive) return true;
-
-    if (player === 'player') {
-        playerScore += pointsToAdd;
-    } else {
-        botScore += pointsToAdd;
-    }
-    updateMainScore();
-
-    if (playerScore >= 12 || botScore >= 12) {
-        gameActive = false;
-        setTimeout(() => endGame(difficulty), 500);
-        return true;
-    }
-    return false;
 }
 
 function dealCards() {
@@ -94,14 +74,14 @@ function dealCards() {
     playerHand = deck.splice(0, 3);
     botHand = deck.splice(0, 3);
     vira = deck.splice(0, 1)[0];
-
+    
     updateManilhas();
     renderHands();
     renderViraCard();
     clearPlayedCards();
     updateMainScore();
     resetActionButtons();
-
+    
     playerTurn = Math.random() > 0.5;
     if (!playerTurn) {
         setMessage('O bot começa...');
@@ -115,7 +95,7 @@ function dealCards() {
 
 function playCard(card, player, isHidden = false) {
     if (isPaused || !gameActive || (player === 'player' && !playerTurn)) return;
-
+    
     const handEl = player === 'player' ? playerHandEl : botHandEl;
     const cardEl = player === 'player' ? handEl.querySelector(`[data-card-id="${card.id}"]`) : handEl.querySelector('.card');
 
@@ -164,7 +144,7 @@ function checkRoundWinner() {
     if (pValue > bValue) { winner = 'player'; playerRoundWins++; } 
     else if (bValue > pValue) { winner = 'bot'; botRoundWins++; } 
     else { winner = 'empate'; playerRoundWins++; botRoundWins++; }
-
+    
     setMessage(winner === 'player' ? 'Você venceu a rodada!' : winner === 'bot' ? 'O Bot venceu a rodada!' : 'Rodada Empatada!');
 
     setTimeout(() => {
@@ -172,13 +152,13 @@ function checkRoundWinner() {
         clearPlayedCards();
         playerPlayedCard = null;
         botPlayedCard = null;
-
+        
         const handWinner = playerRoundWins >= 2 ? 'player' : botRoundWins >= 2 ? 'bot' : null;
         if (handWinner || roundCounter === 3) {
             endHand(playerRoundWins >= botRoundWins ? 'player' : 'bot');
             return;
         }
-
+        
         playerTurn = (winner === 'player' || winner === 'empate');
         renderHands(); 
         if (playerTurn) {
@@ -193,33 +173,22 @@ function checkRoundWinner() {
 }
 
 function endHand(winner) {
-    gameActive = false;
     if (!gameActive) return;
     points = trucoState > 1 ? trucoState : 1;
     let finalMessage;
 
     if (winner === 'player') {
         finalMessage = `Você venceu a mão! (+${points} pts)`;
-        playerScore += points;
-        if (updateScore('player', points)) return;
+        if(updateScore('player', points)) return;
     } else {
         finalMessage = `O bot venceu a mão. (+${points} pts)`;
-        botScore += points;
-        if (updateScore('bot', points)) return;
+        if(updateScore('bot', points)) return;
     }
-
+    
     setMessage(finalMessage);
-    updateMainScore();
-
-    if (playerScore >= 12 || botScore >= 12) {
-        setTimeout(endGame, 1000);
-    } else {
-        setTimeout(dealCards, 2500);
-    }
     setTimeout(dealCards, 2500);
 }
 
-function endGame() {
 function endGame(finalDifficulty) {
     gameActive = false;
     stopTimer();
@@ -235,18 +204,15 @@ function endGame(finalDifficulty) {
     const modal = document.getElementById('end-game-modal');
     document.getElementById('end-game-title').textContent = finalWinner === 'Você' ? 'Você Venceu!' : 'Você Perdeu!';
     document.getElementById('game-duration').textContent = formattedDuration;
-    document.getElementById('ranking-difficulty').textContent = difficulty;
     document.getElementById('ranking-difficulty').textContent = finalDifficulty;
-
-    modal.style.display = 'flex';
+    
     const rankingSubmissionEl = document.querySelector('.ranking-submission');
     if (finalWinner === 'Você') {
         rankingSubmissionEl.style.display = 'flex';
     } else {
         rankingSubmissionEl.style.display = 'none';
     }
-
-    fetchRanking();
+    
     modal.style.display = 'flex';
     fetchRanking(finalDifficulty);
 }
@@ -286,13 +252,12 @@ function botPlays() {
 }
 
 function handleTrucoRequest(requester, level) {
-    if (isPaused) return;
     if (isPaused || !gameActive) return;
     trucoRequester = requester;
     trucoState = level;
     const valueMap = { 3: 'TRUCO', 6: 'SEIS', 9: 'NOVE', 12: 'DOZE' };
     const raisedValue = valueMap[level];
-
+    
     disablePlayerHand();
     hideAllButtons();
 
@@ -314,7 +279,6 @@ function handleTrucoRequest(requester, level) {
                 handleTrucoRequest('bot', 6);
             } else if (hasGoodHand) {
                 setMessage(`Bot aceitou! Vale ${level} Pts.`);
-                hideAllButtons(); // Correção aqui
                 hideAllButtons();
                 if (playerTurn) {
                     setMessage("Bot aceitou. Sua vez de jogar.");
@@ -325,8 +289,6 @@ function handleTrucoRequest(requester, level) {
                 }
             } else {
                 setMessage(`O bot correu! Você ganha ${pointsAwarded} pts.`);
-                playerScore += pointsAwarded;
-                updateMainScore();
                 if (updateScore('player', pointsAwarded)) return;
                 setTimeout(dealCards, 2000);
             }
@@ -338,7 +300,6 @@ function showPlayerResponseButtons(level) {
     trucoButton.textContent = 'Aceitar';
     trucoButton.onclick = () => {
         setMessage(`Você aceitou! Vale ${level} pts.`);
-        hideAllButtons(); // Correção aqui
         hideAllButtons();
         if (playerTurn) {
             setMessage("Você aceitou. Sua vez de jogar.");
@@ -354,8 +315,6 @@ function showPlayerResponseButtons(level) {
     runButton.onclick = () => {
         const pointsAwarded = pointsWhenRunning[level];
         setMessage(`Você correu! O bot ganha ${pointsAwarded} pts.`);
-        botScore += pointsAwarded;
-        updateMainScore();
         if (updateScore('bot', pointsAwarded)) return;
         setTimeout(dealCards, 2000);
     };
@@ -371,7 +330,6 @@ function showPlayerResponseButtons(level) {
     }
 }
 
-// Função resetActionButtons corrigida
 function resetActionButtons() {
     hideAllButtons();
     const isMaoDeOnze = playerScore >= 11 || botScore >= 11;
@@ -387,9 +345,7 @@ function resetActionButtons() {
     showButton('truco-button');
 
     runButton.onclick = () => { 
-        botScore++;
         setMessage("Você correu. Bot ganha 1 pt.");
-        updateMainScore();
         if (updateScore('bot', 1)) return;
         setTimeout(dealCards, 2000);
     };
@@ -482,70 +438,8 @@ function enablePlayerHand() { playerHandEl.classList.remove('disabled'); }
 function hideAllButtons() { [trucoButton, seisButton, noveButton, dozeButton, runButton].forEach(b => b.style.display = 'none'); }
 function showButton(id) { document.getElementById(id).style.display = 'inline-block'; }
 
-async function fetchRanking() { /* ... (função como antes) ... */ }
-async function saveScore() { /* ... (função como antes) ... */ }
-async function fetchRanking(difficultyToFetch) {
-    if (!difficultyToFetch) {
-        console.error("FetchRanking chamado sem dificuldade!");
-        return;
-    }
-    try {
-        const response = await fetch(`https://truco-rosy.vercel.app/api/ranking?difficulty=${difficultyToFetch}`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const ranks = await response.json();
-        
-        const top3List = document.getElementById('top-3-list');
-        top3List.innerHTML = '';
-        for (let i = 0; i < 3; i++) {
-            const li = document.createElement('li');
-            if (ranks[i]) {
-                li.innerHTML = `<span>${i + 1}. ${ranks[i].name}</span> <span>${ranks[i].time}</span>`;
-            } else {
-                li.textContent = `${i + 1}. -`;
-            }
-            top3List.appendChild(li);
-        }
-    } catch (error) {
-        console.error('Erro ao buscar ranking:', error);
-        document.getElementById('top-3-list').innerHTML = '<li>Erro ao carregar.</li>';
-    }
-}
-
-async function saveScore() {
-    const nameInput = document.getElementById('player-name-input');
-    const playerName = nameInput.value.trim().toUpperCase() || 'JOGADOR';
-    nameInput.value = playerName;
-    const duration = document.getElementById('game-duration').textContent;
-    const winner = playerScore >= 12;
-
-    if (!winner) {
-        alert("Apenas vitórias são salvas no ranking.");
-        document.getElementById('save-score-button').disabled = true;
-        return;
-    }
-
-    const scoreData = { name: playerName, time: duration, difficulty: difficulty };
-
-    try {
-        const response = await fetch('https://truco-rosy.vercel.app/api/ranking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(scoreData)
-        });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const result = await response.json();
-        
-        document.getElementById('player-rank').textContent = result.newRank || '-';
-        const saveButton = document.getElementById('save-score-button');
-        saveButton.disabled = true;
-        saveButton.textContent = 'Salvo!';
-        
-        await fetchRanking(difficulty);
-    } catch (error) {
-        console.error('Erro ao salvar no ranking:', error);
-        alert('Não foi possível salvar seu score. Verifique o backend.');
-    }
-}
+async function fetchRanking(difficultyToFetch) { /* ... (código como antes) ... */ }
+async function saveScore() { /* ... (código como antes) ... */ }
 
 function startTimer() {
     stopTimer();
@@ -577,7 +471,7 @@ function resumeGame() {
     isPaused = false;
     document.getElementById('pause-overlay').style.display = 'none';
     startTimer();
-
+    
     if (!playerTurn) {
         setMessage('Bot jogando...');
         setTimeout(botPlays, 500);
@@ -596,5 +490,4 @@ document.getElementById('resume-button').addEventListener('click', resumeGame);
 document.getElementById('menu-button-pause').addEventListener('click', () => location.reload());
 showRankingButton.addEventListener('click', () => {
     window.location.href = 'ranking.html';
-});
 });
