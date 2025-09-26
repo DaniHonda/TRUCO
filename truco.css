@@ -1,5 +1,5 @@
 body {
-    font-family:  "Jersey 10", sans-serif;
+    font-family: 'Press Start 2P', cursive;
     background-color: #0b6623;
     background-image: url("img/naipes.png");
     background-repeat: repeat;
@@ -44,33 +44,6 @@ body {
     font-size: 0; 
     color: transparent;
     background: none;
-}
-
-
-
-
-h1 {
-    font-size: 1.8em;
-    margin: 0;
-    padding: 10px;
-    background-color: #fff;
-    color: #333;
-    text-shadow: none;
-    line-height: 1.2;
-}
-
-.title-truco {
-    color: #fff;
-    text-shadow: 2px 2px 0px #e51d1d, -2px 2px 0px #e51d1d, 2px -2px 0px #e51d1d, -2px -2px 0px #e51d1d;
-    display: block;
-    font-size: 1.2em;
-}
-
-.title-resenha {
-    color: #e51d1d;
-    text-shadow: 2px 2px 0px #fff, -2px 2px 0px #fff, 2px -2px 0px #fff, -2px -2px 0px #fff;
-    display: block;
-    font-size: 1.5em;
 }
 
 #difficulty-selection {
@@ -157,15 +130,6 @@ h1 {
     height: 70px;
     display: inline-block;
 }
-
-
-#difficulty-selection button span {
-    font-size: 1.2em;
-    text-shadow: 2px 2px #00000080;
-}
-
-.suit-spade, .suit-club { color: #444; }
-.suit-heart { color: #e51d1d; }
 
 #game-container {
     background: #0b6623;
@@ -303,7 +267,7 @@ h1 {
 }
 
 button {
-    font-family:  "Jersey 10", sans-serif;
+    font-family: 'Press Start 2P', cursive;
     padding: 12px 15px;
     font-size: 0.8em;
     cursor: pointer;
@@ -410,7 +374,7 @@ button.disabled {
 }
 
 #player-name-input {
-    font-family:  "Jersey 10", sans-serif;
+    font-family: 'Press Start 2P', cursive;
     width: 200px;
     padding: 10px;
     font-size: 1em;
@@ -461,10 +425,6 @@ button.disabled {
         padding: 5px 0;
     }
 
-    h1 {
-        font-size: 1.2em;
-    }
-
     .container {
         padding: 10px;
         border-width: 2px;
@@ -472,9 +432,22 @@ button.disabled {
     }
     
     .title-sign {
-        padding: 5px 10px;
-        margin-bottom: 20px;
+        width: 95%;
+        height: 300px;
+        top: -10px;
     }
+    
+    #difficulty-selection p {
+        font-size: 1.5em;
+    }
+    #difficulty-selection button {
+        font-size: 1.2em;
+    }
+    #easy-mode::before, #medium-mode::before, #hard-mode::before {
+        width: 35px;
+        height: 35px;
+    }
+
 
     .score h2 {
         font-size: 0.8em;
@@ -549,8 +522,20 @@ button.disabled {
     }
 }
 
-@media (max-width: 380px) {
-    h1 {
+@media (max-width: 480px) {
+    body {
+        padding-top: 250px;
+    }
+    
+    .title-sign {
+        height: 250px;
+        top: 0;
+    }
+    
+    #difficulty-selection p {
+        font-size: 1.2em;
+    }
+    #difficulty-selection button {
         font-size: 1em;
     }
 
@@ -615,8 +600,11 @@ button.disabled {
     transition: transform 0.2s, color 0.2s;
 }
 
-
-
+.ranking-nav .nav-button.active,
+.ranking-nav .nav-button:hover {
+    color: #f2d44e;
+    transform: scale(1.1);
+}
 
 .ranking-nav .nav-button[data-difficulty="easy"]::before {
     content: "♠";
@@ -663,16 +651,8 @@ button.disabled {
     font-size: 1.1em;
 }
 
-.ranking-table tr:nth-child(even) {
-    background-color: #076c23;
-}
-
-.ranking-table tr:hover {
-    background-color: #0d8030;
-}
-
-.back-link-container {
-    margin-bottom: 40px; 
+.ranking-table tr:last-child td {
+    border-bottom: none;
 }
 
 .back-link-container {
@@ -698,5 +678,3 @@ button.disabled {
     box-shadow: 9px 9px 0px #000;
     background: #0b6623;
 }
-
-
