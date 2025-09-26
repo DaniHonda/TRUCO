@@ -1,19 +1,17 @@
 body {
     font-family: 'Press Start 2P', cursive;
-    background-color: #0b6623;
-    background-image: url("img/naipes.png");
-    background-repeat: repeat;
-    background-size: 220px;
-    color: #fff;
+    background-color: #3D2B1F; /* Cor de madeira restaurada */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Cpath d='M12 0h18v6h6v6h6v18h-6v6h-6v6H12v-6H6v-6H0V12h6V6h6V0zm12 6h-6v6h6V6zm-6 18h6v6h-6v-6zm12-12h6v6h-6v-6zM6 18h6v6H6v-6z'/%3E%3C/g%3E%3C/svg%3E");
+    color: #F5F5DC;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start; 
+    justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    flex-direction: column;
     text-shadow: 2px 2px #000;
+    padding: 10px 0;
     box-sizing: border-box;
-    padding-top: 350px;
 }
 
 .container {
@@ -27,59 +25,54 @@ body {
 }
 
 .title-sign {
-    position: absolute;
-    top: -60px; 
-    left: 50%;
-    transform: translateX(-50%);
-    background: url("img/placa.png") no-repeat center;
-    background-size: contain;
-    width: 800px;  
-    height: 500px;  
-    border: none;
-    box-shadow: none;
-    z-index: 0;
+    background-color: #C4A484;
+    border: 4px solid #3D2B1F;
+    box-shadow: 8px 8px 0px #000000c0;
+    padding: 10px 20px;
+    margin-bottom: 40px;
+    display: inline-block;
 }
 
-.title-sign h1 {
-    font-size: 0; 
-    color: transparent;
-    background: none;
+h1 {
+    font-size: 1.8em;
+    margin: 0;
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+    text-shadow: none;
+    line-height: 1.2;
+}
+
+.title-truco {
+    color: #fff;
+    text-shadow: 2px 2px 0px #e51d1d, -2px 2px 0px #e51d1d, 2px -2px 0px #e51d1d, -2px -2px 0px #e51d1d;
+    display: block;
+    font-size: 1.2em;
+}
+
+.title-resenha {
+    color: #e51d1d;
+    text-shadow: 2px 2px 0px #fff, -2px 2px 0px #fff, 2px -2px 0px #fff, -2px -2px 0px #fff;
+    display: block;
+    font-size: 1.5em;
 }
 
 #difficulty-selection {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-}
-
-#difficulty-selection p {
-    font-size: 2.5em; 
-    margin-bottom: 30px;
-}
-
-#difficulty-selection button {
     background: none;
     border: none;
     box-shadow: none;
     padding: 0;
-    font-size: 2.2em;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 2px 2px #000;
     display: flex;
-    justify-content: center; 
+    flex-direction: column;
     align-items: center;
     gap: 15px;
-    cursor: pointer;
-    transition: transform 0.2s;
+    width: 100%;
 }
 
-#difficulty-selection button:hover {
-    transform: scale(1.1);
-    color: #f2d44e;
+#difficulty-selection p {
+    font-size: 1.5em;
+    color: #fff;
+    margin: 0 0 10px 0;
 }
 
 .difficulty-options {
@@ -89,42 +82,39 @@ body {
     gap: 10px;
 }
 
-#easy-mode::before {
-    content: "";
-    background: url("img/espadas.png") no-repeat center;
-    background-size: contain;
-    width: 70px;
-    height: 70px;
-    display: inline-block;
+#difficulty-selection button {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 5px;
+    font-size: 1.5em;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s;
 }
 
-#medium-mode::before {
-    content: "";
-    background: url("img/copas.png") no-repeat center;
-    background-size: contain;
-    width: 70px;
-    height: 70px;
-    display: inline-block;
+#difficulty-selection button:hover {
+    transform: scale(1.1);
+    background: none;
+    box-shadow: none;
+    color: #f2d44e;
 }
 
-#hard-mode::before {
-    content: "";
-    background: url("img/paus.png") no-repeat center;
-    background-size: contain;
-    width: 70px;
-    height: 70px;
-    display: inline-block;
+#difficulty-selection button span {
+    font-size: 1.2em;
+    text-shadow: 2px 2px #00000080;
 }
 
-#hard-mode {
-    color: #e51d1d !important;
-}
+.suit-spade, .suit-club { color: #444; }
+.suit-heart { color: #e51d1d; }
 
 #game-container {
     background: #0b6623;
-    border: 6px solid #c4a484;
-    box-shadow: 10px 10px 0px #000000c0;
-    padding: 15px;
+    border: 4px solid #C4A484;
+    box-shadow: 8px 8px 0px #000000c0;
 }
 
 .score-board {
@@ -220,7 +210,9 @@ body {
 .fake-deck .card:nth-child(2) { transform: rotate(2deg); }
 .fake-deck .card:nth-child(3) { transform: rotate(5deg); }
 
-.table-label { font-size: 0.8em; }
+.table-label {
+    font-size: 0.8em;
+}
 
 .played-cards-wrapper {
     display: flex;
@@ -281,8 +273,12 @@ button.disabled {
     box-shadow: 4px 4px 0px #000;
 }
 
-#run-button { background-color: #b95c50; }
-#run-button:hover:not(.disabled) { background-color: #d67e72; }
+#run-button {
+    background-color: #b95c50;
+}
+#run-button:hover:not(.disabled) {
+    background-color: #d67e72;
+}
 
 .top-buttons {
     position: fixed;
@@ -308,7 +304,9 @@ button.disabled {
     box-shadow: 5px 5px 0px #000;
 }
 
-#pause-button { background-color: #f2d44e; }
+#pause-button {
+    background-color: #f2d44e;
+}
 
 .modal-overlay {
     position: fixed;
@@ -398,18 +396,80 @@ button.disabled {
     gap: 15px;
 }
 
+/* --- ESTILOS DO RANKING GERAL --- */
+.ranking-container {
+    padding-top: 15px !important;
+}
+
+.ranking-container h1 {
+    font-size: 2.5em;
+    color: #f2d44e;  
+    text-shadow: 3px 3px #000;
+    margin: 0 0 30px 0;
+}
+
+.ranking-nav {
+    display: flex; justify-content: center;
+    gap: 25px; margin-bottom: 30px;
+}
+
+.ranking-nav .nav-button {
+    background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 1.5em; font-weight: bold; color: #fff; text-shadow: 2px 2px #000;
+    cursor: pointer; transition: transform 0.2s, color 0.2s;
+}
+
+.ranking-nav .nav-button.active,
+.ranking-nav .nav-button:hover {
+    color: #f2d44e;
+    transform: scale(1.1);
+}
+
+.ranking-table table {
+    width: 100%; max-width: 600px; margin: 0 auto;
+    border-collapse: collapse; background-color: #064c19;
+    border: 4px solid #c4a484; box-shadow: 8px 8px 0px #000000c0;
+    color: #fff; font-size: 1em;
+}
+
+.ranking-table th, 
+.ranking-table td {
+    border-bottom: 2px solid #c4a484;
+    padding: 12px; text-align: center;
+}
+
+.ranking-table th {
+    background-color: #0b6623; color: #f2d44e; font-size: 1.1em;
+}
+
+.ranking-table tr:last-child td {
+    border-bottom: none;
+}
+
+.back-link-container {
+    margin: 20px 0 40px 0;
+}
+
+.back-link-container .nav-button {
+    font-size: 1.2em; background: #c4a484; color: #000;
+    padding: 15px 25px; border: 3px solid #000;
+    box-shadow: 6px 6px 0px #000; text-decoration: none;
+    display: inline-block; transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.back-link-container .nav-button:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #000;
+    background: #d4b79c;
+}
+
+
 @media (max-width: 768px) {
     body {
         text-shadow: 1px 1px #000;
         padding: 5px 0;
     }
 
-    .container {
-        padding: 10px;
-        border-width: 2px;
-        box-shadow: 4px 4px 0px #000000c0;
-    }
-    
     .title-sign {
         width: 95%;
         height: 300px;
@@ -427,6 +487,11 @@ button.disabled {
         height: 35px;
     }
 
+    .container {
+        padding: 10px;
+        border-width: 2px;
+        box-shadow: 4px 4px 0px #000000c0;
+    }
 
     .score h2 {
         font-size: 0.8em;
@@ -502,13 +567,13 @@ button.disabled {
 }
 
 @media (max-width: 480px) {
+    body {
+        padding-top: 250px;
+    }
+    
     .title-sign {
         height: 250px;
         top: 0;
-    }
-
-    body {
-        padding-top: 250px;
     }
     
     #difficulty-selection p {
