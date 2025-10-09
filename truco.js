@@ -209,7 +209,6 @@ function endGame() {
     document.getElementById('game-duration').textContent = finalDuration;
     document.getElementById('ranking-difficulty').textContent = difficulty;
     
-    // Mostra o formulário de salvar apenas se o jogador venceu
     const rankingSubmission = document.querySelector('.ranking-submission');
     if (finalWinner === 'Você') {
         rankingSubmission.style.display = 'flex';
@@ -337,10 +336,12 @@ function showPlayerResponseButtons(level) {
     }
 }
 
+// AQUI ESTÁ A FUNÇÃO CORRIGIDA
 function resetActionButtons() {
     hideAllButtons();
     const isMaoDeOnze = playerScore >= 11 || botScore >= 11;
 
+    // Lógica do botão Truco
     trucoButton.textContent = 'Truco';
     trucoButton.onclick = () => handleTrucoRequest('player', 3);
     if (isMaoDeOnze) {
@@ -350,6 +351,15 @@ function resetActionButtons() {
         trucoButton.classList.remove('disabled');
     }
     showButton('truco-button');
+
+    // Lógica do botão Correr (que estava faltando)
+    runButton.onclick = () => { 
+        botScore++;
+        setMessage("Você correu. O bot ganha 1 pt.");
+        updateMainScore();
+        setTimeout(dealCards, 2000);
+    };
+    showButton('run-button');
 }
 
 function updateManilhas() {
@@ -484,7 +494,7 @@ async function saveScore() {
         if (response.ok) {
             document.getElementById('player-rank').textContent = result.newRank || '-';
             saveButton.textContent = 'Salvo!';
-            await fetchRanking(); // Atualiza a lista do top 3
+            await fetchRanking();
         } else {
             throw new Error(result.error || 'Erro desconhecido');
         }
@@ -517,15 +527,15 @@ function stopTimer() {
 function pauseGame() {
     if (!gameActive || isPaused) return;
     isPaused = true;
-    pausedTime = new Date(); // Registra quando o jogo foi pausado
+    pausedTime = new Date();
     stopTimer();
     document.getElementById('pause-overlay').style.display = 'flex';
 }
 
 function resumeGame() {
     if (!isPaused) return;
-    const pauseDuration = new Date() - pausedTime; // Calcula a duração da pausa
-    gameStartTime.setTime(gameStartTime.getTime() + pauseDuration); // Adiciona a duração da pausa ao tempo de início
+    const pauseDuration = new Date() - pausedTime;
+    gameStartTime.setTime(gameStartTime.getTime() + pauseDuration);
     isPaused = false;
     document.getElementById('pause-overlay').style.display = 'none';
     startTimer();
@@ -545,8 +555,7 @@ document.getElementById('new-game-button').addEventListener('click', () => locat
 document.getElementById('menu-button').addEventListener('click', () => location.reload());
 document.getElementById('pause-button').addEventListener('click', pauseGame);
 document.getElementById('resume-button').addEventListener('click', resumeGame);
-document.getElementById('menu-button-pause').addEventListener('click', () => location.reload()); 
+document.getElementById('menu-button-pause').addEventListener('click', () => location.reload());
 showRankingButton.addEventListener('click', () => {
     window.location.href = 'ranking.html';
 });
-
