@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const navButtons = document.querySelectorAll('.ranking-nav .nav-button');
+
+    const navButtons = document.querySelectorAll('.ranking-nav .nav-button'); 
     const contentArea = document.getElementById('ranking-content-area');
 
     async function loadRanking(difficulty) {
@@ -69,3 +70,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Carrega o ranking 'Fácil' por padrão ao abrir a página
     loadRanking('easy');
 });
+
