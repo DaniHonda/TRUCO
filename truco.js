@@ -545,6 +545,8 @@ document.getElementById('new-game-button').addEventListener('click', () => locat
 document.getElementById('menu-button').addEventListener('click', () => location.reload());
 document.getElementById('pause-button').addEventListener('click', pauseGame);
 document.getElementById('resume-button').addEventListener('click', resumeGame);
+document.getElementById('menu-button-pause').addEventListener('click', () => location.reload()); 
 showRankingButton.addEventListener('click', () => {
     window.location.href = 'ranking.html';
 });
+
