@@ -35,6 +35,7 @@ let gameStartTime = null;
 let timerInterval = null;
 let isPaused = false;
 let pausedTime = 0;
+let finalDuration = "00:00";
 
 // Core Game Flow
 function setDifficulty(level) {
@@ -198,15 +199,23 @@ function endGame() {
     const duration = new Date() - gameStartTime;
     const minutes = Math.floor(duration / 60000);
     const seconds = ((duration % 60000) / 1000).toFixed(0);
-    const formattedDuration = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    finalDuration = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
     document.querySelector('.container').style.display = 'none';
     document.querySelector('.top-buttons').style.display = 'none';
 
     const modal = document.getElementById('end-game-modal');
     document.getElementById('end-game-title').textContent = finalWinner === 'Você' ? 'Você Venceu!' : 'Você Perdeu!';
-    document.getElementById('game-duration').textContent = formattedDuration;
+    document.getElementById('game-duration').textContent = finalDuration;
     document.getElementById('ranking-difficulty').textContent = difficulty;
+    
+    // Mostra o formulário de salvar apenas se o jogador venceu
+    const rankingSubmission = document.querySelector('.ranking-submission');
+    if (finalWinner === 'Você') {
+        rankingSubmission.style.display = 'flex';
+    } else {
+        rankingSubmission.style.display = 'none';
+    }
     
     modal.style.display = 'flex';
     
@@ -251,6 +260,7 @@ function handleTrucoRequest(requester, level) {
     if (isPaused) return;
     trucoRequester = requester;
     trucoState = level;
+    points = level;
     const valueMap = { 3: 'TRUCO', 6: 'SEIS', 9: 'NOVE', 12: 'DOZE' };
     const raisedValue = valueMap[level];
     
@@ -270,16 +280,16 @@ function handleTrucoRequest(requester, level) {
             const wantsToRaiseAsBluff = !hasVeryGoodHand && Math.random() < 0.10;
             const wantsToRaiseWithGoodHand = hasVeryGoodHand && Math.random() < 0.40;
 
-            if (level === 3 && (wantsToRaiseWithGoodHand || wantsToRaiseAsBluff)) {
-                handleTrucoRequest('bot', 6);
+            if (level < 12 && (wantsToRaiseWithGoodHand || wantsToRaiseAsBluff)) {
+                handleTrucoRequest('bot', level + 3);
             } else if (hasGoodHand) {
                 setMessage(`Bot aceitou! Vale ${level} Pts.`);
-                hideAllButtons(); // Correção aqui
+                hideAllButtons(); 
                 if (playerTurn) {
-                    setMessage("Bot aceitou. Sua vez de jogar.");
+                    setMessage(`Bot aceitou. Sua vez de jogar. Vale ${level} Pts.`);
                     enablePlayerHand();
                 } else {
-                    setMessage("Bot aceitou. Vez dele jogar.");
+                    setMessage(`Bot aceitou. Vez dele jogar. Vale ${level} Pts.`);
                     setTimeout(botPlays, 1000);
                 }
             } else {
@@ -296,7 +306,7 @@ function showPlayerResponseButtons(level) {
     trucoButton.textContent = 'Aceitar';
     trucoButton.onclick = () => {
         setMessage(`Você aceitou! Vale ${level} pts.`);
-        hideAllButtons(); // Correção aqui
+        hideAllButtons();
         if (playerTurn) {
             setMessage("Você aceitou. Sua vez de jogar.");
             enablePlayerHand();
@@ -327,7 +337,6 @@ function showPlayerResponseButtons(level) {
     }
 }
 
-// Função resetActionButtons corrigida
 function resetActionButtons() {
     hideAllButtons();
     const isMaoDeOnze = playerScore >= 11 || botScore >= 11;
@@ -341,14 +350,6 @@ function resetActionButtons() {
         trucoButton.classList.remove('disabled');
     }
     showButton('truco-button');
-
-    runButton.onclick = () => { 
-        botScore++;
-        setMessage("Você correu. Bot ganha 1 pt.");
-        updateMainScore();
-        setTimeout(dealCards, 2000);
-    };
-    showButton('run-button');
 }
 
 function updateManilhas() {
@@ -388,12 +389,8 @@ function createCardElement(card, player) {
     } else {
         cardEl.dataset.cardId = card.id;
         const suitClass = ['♦️', '♥️'].includes(card.naipe) ? 'suit-red' : 'suit-black';
-        cardEl.innerHTML = `<div class="card-value-top">${card.valor}</div><div class="card-value-bottom ${suitClass}">${card.naipe}</div><button class="hide-button">?</button>`;
+        cardEl.innerHTML = `<div class="card-value-top">${card.valor}</div><div class="card-value-bottom ${suitClass}">${card.naipe}</div>`;
         cardEl.addEventListener('click', () => playCard(card, 'player', false));
-        cardEl.querySelector('.hide-button').addEventListener('click', (e) => {
-            e.stopPropagation();
-            playCard(card, 'player', true);
-        });
     }
     return cardEl;
 }
@@ -437,17 +434,79 @@ function enablePlayerHand() { playerHandEl.classList.remove('disabled'); }
 function hideAllButtons() { [trucoButton, seisButton, noveButton, dozeButton, runButton].forEach(b => b.style.display = 'none'); }
 function showButton(id) { document.getElementById(id).style.display = 'inline-block'; }
 
-async function fetchRanking() { /* ... (função como antes) ... */ }
-async function saveScore() { /* ... (função como antes) ... */ }
+async function fetchRanking() {
+    const top3List = document.getElementById('top-3-list');
+    top3List.innerHTML = '<li>Carregando...</li>';
+    try {
+        const response = await fetch(`/api/ranking?difficulty=${difficulty}`);
+        const ranks = await response.json();
+        top3List.innerHTML = '';
+        ranks.slice(0, 3).forEach((rank, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${index + 1}. ${rank.name} - ${rank.time}`;
+            top3List.appendChild(li);
+        });
+        if (ranks.length === 0) {
+            top3List.innerHTML = '<li>Nenhum recorde ainda.</li>';
+        }
+    } catch (error) {
+        console.error('Erro ao buscar ranking:', error);
+        top3List.innerHTML = '<li>Erro ao carregar.</li>';
+    }
+}
+
+async function saveScore() {
+    const playerNameInput = document.getElementById('player-name-input');
+    const saveButton = document.getElementById('save-score-button');
+    const playerName = playerNameInput.value.trim().toUpperCase();
+
+    if (!playerName) {
+        alert('Por favor, digite seu nome!');
+        return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = 'Salvando...';
+
+    try {
+        const response = await fetch('/api/ranking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: playerName,
+                time: finalDuration,
+                difficulty: difficulty
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            document.getElementById('player-rank').textContent = result.newRank || '-';
+            saveButton.textContent = 'Salvo!';
+            await fetchRanking(); // Atualiza a lista do top 3
+        } else {
+            throw new Error(result.error || 'Erro desconhecido');
+        }
+    } catch (error) {
+        console.error('Erro ao salvar score:', error);
+        alert(`Não foi possível salvar seu score: ${error.message}`);
+        saveButton.textContent = 'Salvar no Ranking';
+        saveButton.disabled = false;
+    }
+}
 
 function startTimer() {
     stopTimer();
     const timerEl = document.getElementById('in-game-timer');
     timerInterval = setInterval(() => {
-        const duration = new Date() - gameStartTime;
-        const minutes = Math.floor(duration / 60000);
-        const seconds = ((duration % 60000) / 1000).toFixed(0);
-        timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        if (!isPaused) {
+            const now = new Date();
+            const duration = now - gameStartTime;
+            const minutes = Math.floor(duration / 60000);
+            const seconds = Math.floor((duration % 60000) / 1000);
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
     }, 1000);
 }
 
@@ -456,17 +515,17 @@ function stopTimer() {
 }
 
 function pauseGame() {
-    if (!gameActive) return;
+    if (!gameActive || isPaused) return;
     isPaused = true;
-    pausedTime = new Date();
+    pausedTime = new Date(); // Registra quando o jogo foi pausado
     stopTimer();
     document.getElementById('pause-overlay').style.display = 'flex';
 }
 
 function resumeGame() {
     if (!isPaused) return;
-    const pauseDuration = new Date() - pausedTime;
-    gameStartTime.setTime(gameStartTime.getTime() + pauseDuration);
+    const pauseDuration = new Date() - pausedTime; // Calcula a duração da pausa
+    gameStartTime.setTime(gameStartTime.getTime() + pauseDuration); // Adiciona a duração da pausa ao tempo de início
     isPaused = false;
     document.getElementById('pause-overlay').style.display = 'none';
     startTimer();
