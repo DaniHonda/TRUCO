@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    const navButtons = document.querySelectorAll('.nav-button');
+    const navButtons = document.querySelectorAll('.ranking-nav .nav-button');
     const contentArea = document.getElementById('ranking-content-area');
 
     async function loadRanking(difficulty) {
@@ -13,9 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.innerHTML = '<p>Carregando ranking...</p>';
 
         try {
-            // 3. Busca os dados do servidor
-            // ATENÇÃO: a URL '/api/ranking.php' é um exemplo. Mude para o endereço do seu servidor.
-            const response = await fetch(`/api/ranking.php?difficulty=${difficulty}&limit=all`);
+            // 3. Busca os dados do servidor (URL CORRIGIDA)
+            const response = await fetch(`/api/ranking?difficulty=${difficulty}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const ranks = await response.json();
 
             // 4. Monta a tabela com os dados recebidos
@@ -34,11 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 tableHTML += '<tr><td colspan="3">Nenhum registro encontrado.</td></tr>';
             } else {
                 ranks.forEach((rank, index) => {
+                    // Previne XSS, tratando os dados como texto
+                    const rankName = document.createTextNode(rank.name).textContent;
+                    const rankTime = document.createTextNode(rank.time).textContent;
                     tableHTML += `
                         <tr>
                             <td>${index + 1}</td>
-                            <td>${rank.name}</td>
-                            <td>${rank.time}</td>
+                            <td>${rankName}</td>
+                            <td>${rankTime}</td>
                         </tr>`;
                 });
             }
@@ -56,7 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
     navButtons.forEach(button => {
         button.addEventListener('click', () => {
             const difficulty = button.dataset.difficulty;
-            loadRanking(difficulty);
+            if (difficulty) {
+                loadRanking(difficulty);
+            }
         });
     });
 
